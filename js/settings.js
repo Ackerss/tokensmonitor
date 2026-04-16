@@ -13,6 +13,15 @@ let currentSettings = {
 };
 
 export function loadSettings() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const magicToken = urlParams.get('t');
+  
+  if (magicToken) {
+    localStorage.setItem(StorageKey.TOKEN, magicToken);
+    // Limpa a URL pra não as pessoas não copiarem sem querer ao compartilhar
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
   currentSettings = {
     token: localStorage.getItem(StorageKey.TOKEN) || '',
     gistId: localStorage.getItem(StorageKey.GIST_ID) || '',
