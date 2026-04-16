@@ -197,12 +197,14 @@ async function handleConfirm() {
       newData.accounts[accId].models = newGModels;
     } else if (modalCtx.platform === 'claudecode') {
       const merge = modalCtx.parsedData;
+      // IMPORTANTE: usar !== undefined em vez de ||, pois 0 é falsy e quebraria
+      // o caso onde a sessão está zerada (0% usado)
       newData.accounts[accId] = {
         ...newData.accounts[accId],
-        session: merge.session || newData.accounts[accId].session,
-        sessionRefresh: merge.sessionRefresh || newData.accounts[accId].sessionRefresh,
-        weekly: merge.weekly || newData.accounts[accId].weekly,
-        weeklyRefresh: merge.weeklyRefresh || newData.accounts[accId].weeklyRefresh,
+        session: merge.session !== undefined ? merge.session : newData.accounts[accId].session,
+        sessionRefresh: merge.sessionRefresh !== null ? merge.sessionRefresh : newData.accounts[accId].sessionRefresh,
+        weekly: merge.weekly !== undefined ? merge.weekly : newData.accounts[accId].weekly,
+        weeklyRefresh: merge.weeklyRefresh !== null ? merge.weeklyRefresh : newData.accounts[accId].weeklyRefresh,
       };
     }
 

@@ -149,7 +149,7 @@ function buildClaudeCodeCard(id, acc) {
         <div class="claude-usage-bar"><div class="claude-usage-fill ${acc.session > 80 ? 'warning' : ''}" style="width: ${acc.session}%"></div></div>
         <div class="claude-usage-meta">
           <span>${acc.session}% usado</span>
-          <span>${getRefreshDisplay(acc.sessionRefresh)}</span>
+          <span>${acc.sessionRefresh ? getRefreshDisplay(acc.sessionRefresh) : 'Por sessão'}</span>
         </div>
       </div>
       <div class="claude-section weekly">
