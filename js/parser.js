@@ -102,7 +102,7 @@ export function parseAntigravity(text) {
     }
 
     if (modelName) {
-      const modelData = { name: modelName, level: 'empty', resetsAt: null, lastUpdated: new Date().toISOString() };
+      const modelData = { name: modelName, level: '0', resetsAt: null, lastUpdated: new Date().toISOString() };
       
       // Lookahead up to 3 lines pra caçar os tempos
       for (let j = 1; j <= 4 && i + j < lines.length; j++) {

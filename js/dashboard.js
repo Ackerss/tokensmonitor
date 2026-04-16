@@ -56,9 +56,19 @@ function buildAntigravityCard(id, acc) {
   // Acha o melhor status dot da conta global
   let globalDot = 'empty';
   const models = Object.values(acc.models || {});
-  if (models.some(m => m.level === 'full' && isPast(m.resetsAt))) globalDot = 'full';
-  else if (models.some(m => m.level === 'medium' && isPast(m.resetsAt))) globalDot = 'medium';
-  else if (models.some(m => m.level === 'low' && isPast(m.resetsAt))) globalDot = 'low';
+  
+  function safeLevel(oldLevel) {
+    if (!oldLevel) return '0';
+    if (oldLevel === 'full') return '5';
+    if (oldLevel === 'medium') return '3';
+    if (oldLevel === 'low') return '1';
+    if (oldLevel === 'empty') return '0';
+    return oldLevel; // "0" to "5"
+  }
+
+  if (models.some(m => parseInt(safeLevel(m.level)) === 5 && isPast(m.resetsAt))) globalDot = 'full';
+  else if (models.some(m => parseInt(safeLevel(m.level)) >= 3 && isPast(m.resetsAt))) globalDot = 'medium';
+  else if (models.some(m => parseInt(safeLevel(m.level)) >= 1 && isPast(m.resetsAt))) globalDot = 'low';
 
   div.innerHTML = `
     <div class="card-header">
@@ -76,10 +86,10 @@ function buildAntigravityCard(id, acc) {
             <div class="model-refresh ${getTimeStatus(m.resetsAt)}">${getRefreshDisplay(m.resetsAt)}</div>
           </div>
           <div class="token-bar-container">
-            <div class="token-bar-track">
-              <div class="token-bar-fill ${m.level}"></div>
+            <div class="ag-segments lvl${safeLevel(m.level)}">
+              ${[1, 2, 3, 4, 5].map(i => `<div class="ag-seg ${i <= parseInt(safeLevel(m.level)) ? 'filled' : ''}"></div>`).join('')}
             </div>
-            <div class="token-bar-label ${m.level}">${formatLevel(m.level)}</div>
+            <div class="token-bar-label lvl${safeLevel(m.level)}">${formatLevel(m.level)}</div>
             <button class="notif-btn ${m.notifEnabled ? 'active' : ''}" data-acc="${id}" data-model="${m.name}" title="Avisar quando renovar">🔔</button>
           </div>
         </div>
@@ -145,9 +155,17 @@ function buildClaudeCodeCard(id, acc) {
   return div;
 }
 
-function formatLevel(level) {
-  if (level === 'full') return 'Cheio';
-  if (level === 'medium') return 'Médio';
-  if (level === 'low') return 'Baixo';
+function formatLevel(lvlStr) {
+  let level = parseInt(lvlStr);
+  if (lvlStr === 'full') level = 5;
+  if (lvlStr === 'medium') level = 3;
+  if (lvlStr === 'low') level = 1;
+  if (lvlStr === 'empty' || isNaN(level)) level = 0;
+
+  if (level === 5) return 'Cheio';
+  if (level === 4) return 'Alto';
+  if (level === 3) return 'Médio';
+  if (level === 2) return 'Baixo';
+  if (level === 1) return 'Mínimo';
   return 'Zerado';
 }

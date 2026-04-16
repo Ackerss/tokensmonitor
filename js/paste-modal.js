@@ -83,17 +83,46 @@ function renderStep2() {
       <div class="field-group">
         <label>Nível dos Tokens por Modelo</label>
         <div id="modal-level-pickers" style="display:flex; flex-direction:column; gap:0.75rem">
-        ${Object.values(modalCtx.parsedData).map(m => `
+        ${Object.values(modalCtx.parsedData).map(m => {
+          let lvl = m.level || '0';
+          if (lvl === 'empty') lvl = '0';
+          if (lvl === 'low') lvl = '1';
+          if (lvl === 'medium') lvl = '3';
+          if (lvl === 'full') lvl = '5';
+          m.level = lvl;
+
+          return `
           <div class="model-picker-row">
-            <div style="font-size:0.8rem; font-weight:600; margin-bottom:0.25rem">${m.name}</div>
+            <div style="font-size:0.8rem; font-weight:600; margin-bottom:0.4rem">${m.name}</div>
             <div class="usage-picker" data-model="${m.name}">
-              <div class="usage-option full" data-val="full"><span class="usage-option-icon">🟢</span> Cheio</div>
-              <div class="usage-option medium" data-val="medium"><span class="usage-option-icon">🟡</span> Médio</div>
-              <div class="usage-option low" data-val="low"><span class="usage-option-icon">🔴</span> Baixo</div>
-              <div class="usage-option empty selected" data-val="empty"><span class="usage-option-icon">⚫</span> Zerado</div>
+              <div class="usage-option lvl0 ${lvl==='0'?'selected':''}" data-val="0">
+                <div class="ag-segments lvl0">${[1,2,3,4,5].map(i=>'<div class="ag-seg"></div>').join('')}</div>
+                Zerado
+              </div>
+              <div class="usage-option lvl1 ${lvl==='1'?'selected':''}" data-val="1">
+                <div class="ag-segments lvl1">${[1,2,3,4,5].map(i=>`<div class="ag-seg ${i<=1?'filled':''}"></div>`).join('')}</div>
+                1
+              </div>
+              <div class="usage-option lvl2 ${lvl==='2'?'selected':''}" data-val="2">
+                <div class="ag-segments lvl2">${[1,2,3,4,5].map(i=>`<div class="ag-seg ${i<=2?'filled':''}"></div>`).join('')}</div>
+                2
+              </div>
+              <div class="usage-option lvl3 ${lvl==='3'?'selected':''}" data-val="3">
+                <div class="ag-segments lvl3">${[1,2,3,4,5].map(i=>`<div class="ag-seg ${i<=3?'filled':''}"></div>`).join('')}</div>
+                3
+              </div>
+              <div class="usage-option lvl4 ${lvl==='4'?'selected':''}" data-val="4">
+                <div class="ag-segments lvl4">${[1,2,3,4,5].map(i=>`<div class="ag-seg ${i<=4?'filled':''}"></div>`).join('')}</div>
+                4
+              </div>
+              <div class="usage-option lvl5 ${lvl==='5'?'selected':''}" data-val="5">
+                <div class="ag-segments lvl5">${[1,2,3,4,5].map(i=>`<div class="ag-seg ${i<=5?'filled':''}"></div>`).join('')}</div>
+                Cheio
+              </div>
             </div>
           </div>
-        `).join('')}
+          `;
+        }).join('')}
         </div>
       </div>
       ` : ''}
