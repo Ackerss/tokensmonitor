@@ -60,7 +60,17 @@ export function getRefreshDisplay(value) {
   const d = new Date(value);
   // Se for ISO válido tipo 2026-X
   if (!isNaN(d.getTime()) && value.includes('T')) {
-      return getRelativeTimeString(value);
+      const dias = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      const diaDaSemana = dias[d.getDay()];
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const hh = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      
+      const rel = getRelativeTimeString(value);
+      if (rel === 'Pronto') return 'Pronto!';
+      
+      return `${diaDaSemana} ${dd}/${mm} as ${hh}:${min} (${rel})`;
   }
 
   // É string avulsa (Claude "Reinicia sex., 22:00")

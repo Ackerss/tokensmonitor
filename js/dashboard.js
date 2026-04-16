@@ -53,9 +53,19 @@ function buildAntigravityCard(id, acc) {
   const div = document.createElement('div');
   div.className = 'account-card';
   
-  // Acha o melhor status dot da conta global
+  const allowedOrder = [
+    'Gemini 3.1 Pro (High)',
+    'Gemini 3 Flash',
+    'Claude Sonnet 4.6 (Thinking)',
+    'Claude Opus 4.6 (Thinking)'
+  ];
+  
+  const validModels = allowedOrder
+    .map(name => acc.models && acc.models[name])
+    .filter(m => m !== undefined);
+
+  // Acha o melhor status dot da conta global baseando-se apenas nos permitidos
   let globalDot = 'empty';
-  const models = Object.values(acc.models || {});
   
   function safeLevel(oldLevel) {
     if (!oldLevel) return '0';
@@ -66,9 +76,9 @@ function buildAntigravityCard(id, acc) {
     return oldLevel; // "0" to "5"
   }
 
-  if (models.some(m => parseInt(safeLevel(m.level)) === 5 && isPast(m.resetsAt))) globalDot = 'full';
-  else if (models.some(m => parseInt(safeLevel(m.level)) >= 3 && isPast(m.resetsAt))) globalDot = 'medium';
-  else if (models.some(m => parseInt(safeLevel(m.level)) >= 1 && isPast(m.resetsAt))) globalDot = 'low';
+  if (validModels.some(m => parseInt(safeLevel(m.level)) === 5 && isPast(m.resetsAt))) globalDot = 'full';
+  else if (validModels.some(m => parseInt(safeLevel(m.level)) >= 3 && isPast(m.resetsAt))) globalDot = 'medium';
+  else if (validModels.some(m => parseInt(safeLevel(m.level)) >= 1 && isPast(m.resetsAt))) globalDot = 'low';
 
   div.innerHTML = `
     <div class="card-header">
@@ -79,7 +89,7 @@ function buildAntigravityCard(id, acc) {
       <div class="card-updated">Antigravity</div>
     </div>
     <div class="card-body">
-      ${Object.values(acc.models || {}).map(m => `
+      ${validModels.map(m => `
         <div class="model-row">
           <div class="model-row-top">
             <div class="model-name">${m.name}</div>
@@ -94,7 +104,7 @@ function buildAntigravityCard(id, acc) {
           </div>
         </div>
       `).join('')}
-      ${models.length === 0 ? '<div style="padding:1rem">Nenhum dado colado ainda.</div>' : ''}
+      ${validModels.length === 0 ? '<div style="padding:1rem">Nenhum dado colado ainda.</div>' : ''}
     </div>
   `;
 

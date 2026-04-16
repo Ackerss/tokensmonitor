@@ -173,17 +173,28 @@ async function handleConfirm() {
   try {
     if (modalCtx.platform === 'antigravity') {
       const gModels = newData.accounts[accId].models || {};
+      const newGModels = {};
+      const allowed = ['Gemini 3.1 Pro (High)', 'Gemini 3 Flash', 'Claude Sonnet 4.6 (Thinking)', 'Claude Opus 4.6 (Thinking)'];
+      
+      // Keep only allowed previous models
+      Object.keys(gModels).forEach(k => {
+        if (allowed.includes(k)) newGModels[k] = gModels[k];
+      });
+
+      // Update with new data
       Object.keys(modalCtx.parsedData).forEach(mName => {
-        if (!gModels[mName]) gModels[mName] = { notifEnabled: false };
-        gModels[mName] = {
-           ...gModels[mName],
+        if (!allowed.includes(mName)) return; // double check
+
+        if (!newGModels[mName]) newGModels[mName] = { notifEnabled: false };
+        newGModels[mName] = {
+           ...newGModels[mName],
            name: mName,
            level: modalCtx.parsedData[mName].level,
            resetsAt: modalCtx.parsedData[mName].resetsAt,
            lastUpdated: modalCtx.parsedData[mName].lastUpdated
         };
       });
-      newData.accounts[accId].models = gModels;
+      newData.accounts[accId].models = newGModels;
     } else if (modalCtx.platform === 'claudecode') {
       const merge = modalCtx.parsedData;
       newData.accounts[accId] = {
