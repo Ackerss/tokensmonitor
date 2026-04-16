@@ -12,24 +12,36 @@ export function detectPlatform(text) {
 }
 
 function parseRelativeTime(agoStr) {
-  // Converte "1 hour ago", "15 minutes ago" para um Date
+  // Converte "1 day ago", "1 hour ago", "15 minutes ago" para um Date
   const now = new Date();
+  
+  let hasParsed = false;
+
+  const mDay = agoStr.match(/(\d+)\s*day/i);
+  if (mDay) {
+    now.setDate(now.getDate() - parseInt(mDay[1], 10));
+    hasParsed = true;
+  }
   
   const mHour = agoStr.match(/(\d+)\s*hour/i);
   if (mHour) {
     now.setHours(now.getHours() - parseInt(mHour[1], 10));
-    return now.toISOString();
+    hasParsed = true;
   }
   
   const mMin = agoStr.match(/(\d+)\s*minute/i);
   if (mMin) {
     now.setMinutes(now.getMinutes() - parseInt(mMin[1], 10));
-    return now.toISOString();
+    hasParsed = true;
   }
   
   const mSec = agoStr.match(/(\d+)\s*second/i);
   if (mSec) {
     now.setSeconds(now.getSeconds() - parseInt(mSec[1], 10));
+    hasParsed = true;
+  }
+
+  if (hasParsed) {
     return now.toISOString();
   }
 
@@ -41,13 +53,15 @@ function parseRelativeTime(agoStr) {
 }
 
 function parseNextResetDelay(delayStr) {
-  // delayStr ex: "In 14 hours, 51 minutes", "In 55 minutes, 36 seconds", "Tomorrow at ..."
+  // delayStr ex: "In 1 day, 3 hours", "In 14 hours, 51 minutes", "In 55 minutes", "Tomorrow at ..."
   // Esta função tenta jogar a string solta na lógica e inferir o tempo exato de renovação real.
   const now = new Date();
   
-  // "In 14 hours, 51 minutes"
-  let hours = 0, mins = 0, secs = 0;
+  let days = 0, hours = 0, mins = 0, secs = 0;
   
+  const dMatch = delayStr.match(/(\d+)\s*day/i);
+  if (dMatch) days = parseInt(dMatch[1], 10);
+
   const hMatch = delayStr.match(/(\d+)\s*hour/i);
   if (hMatch) hours = parseInt(hMatch[1], 10);
   
@@ -57,7 +71,8 @@ function parseNextResetDelay(delayStr) {
   const sMatch = delayStr.match(/(\d+)\s*second/i);
   if (sMatch) secs = parseInt(sMatch[1], 10);
 
-  if (hours > 0 || mins > 0 || secs > 0) {
+  if (days > 0 || hours > 0 || mins > 0 || secs > 0) {
+    now.setDate(now.getDate() + days);
     now.setHours(now.getHours() + hours);
     now.setMinutes(now.getMinutes() + mins);
     now.setSeconds(now.getSeconds() + secs);
@@ -149,7 +164,7 @@ export function parseClaudeCode(text) {
     // Achar porcentagem
     const m = l.match(/(\d+)%\s*usado/);
     if (m) {
-      const val = 100 - parseInt(m[1], 10); // A gente salva "Tokens restantes", se for 73% usado -> 27% restantes
+      const val = parseInt(m[1], 10); // Salva a porcentagem "usado" exatamente como vem
       if (inWeekly) {
         result.weekly = val;
       } else {
@@ -179,9 +194,9 @@ export function parseClaudeCode(text) {
      // tenta ver se tem regex solta
      const pMatches = text.match(/(\d+)%\s*usado/gi);
      if (pMatches && pMatches.length > 0) {
-        result.session = 100 - parseInt(pMatches[0].match(/\d+/)[0], 10);
+        result.session = parseInt(pMatches[0].match(/\d+/)[0], 10);
         if (pMatches.length > 1) {
-          result.weekly = 100 - parseInt(pMatches[1].match(/\d+/)[0], 10);
+          result.weekly = parseInt(pMatches[1].match(/\d+/)[0], 10);
         }
      }
   }
