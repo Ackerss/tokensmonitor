@@ -89,9 +89,15 @@ export function parseAntigravity(text) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     let modelName = '';
-    
-    // Identificar o modelo pelo prefixo (funciona para variações tipo Low/High)
-    if (line.startsWith('Gemini') || line.startsWith('Claude') || line.startsWith('GPT-') || line.startsWith('o1') || line.startsWith('o3') || line.startsWith('DeepSeek')) {
+
+    // Identificar apenas os modelos permitidos
+    const isAllowed = 
+      line.startsWith('Gemini 3.1 Pro (High)') || 
+      line.startsWith('Gemini 3 Flash') || 
+      line.startsWith('Claude Sonnet 4.6') || 
+      line.startsWith('Claude Opus 4.6');
+
+    if (isAllowed) {
       modelName = line;
     }
 

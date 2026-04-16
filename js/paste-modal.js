@@ -9,8 +9,7 @@ let modalCtx = {
   rawText: '',
   platform: 'unknown',
   parsedData: null,
-  selectedAccId: null,
-  level: 'empty' // pro antigravity default picker
+  selectedAccId: null
 };
 
 export function initPasteModal() {
@@ -41,7 +40,7 @@ export function initPasteModal() {
 
 function closeModal() {
   document.getElementById('modal-paste').classList.add('hidden');
-  modalCtx = { rawText: '', platform: 'unknown', parsedData: null, selectedAccId: null, level: 'empty' };
+  modalCtx = { rawText: '', platform: 'unknown', parsedData: null, selectedAccId: null };
 }
 
 function processPaste(text) {
@@ -82,27 +81,26 @@ function renderStep2() {
 
       ${isAnti ? `
       <div class="field-group">
-        <label>Nível dos Tokens</label>
-        <div class="usage-picker" id="modal-level-picker">
-          <div class="usage-option full" data-val="full">
-            <span class="usage-option-icon">🟢</span> Cheio
+        <label>Nível dos Tokens por Modelo</label>
+        <div id="modal-level-pickers" style="display:flex; flex-direction:column; gap:0.75rem">
+        ${Object.values(modalCtx.parsedData).map(m => `
+          <div class="model-picker-row">
+            <div style="font-size:0.8rem; font-weight:600; margin-bottom:0.25rem">${m.name}</div>
+            <div class="usage-picker" data-model="${m.name}">
+              <div class="usage-option full" data-val="full"><span class="usage-option-icon">🟢</span> Cheio</div>
+              <div class="usage-option medium" data-val="medium"><span class="usage-option-icon">🟡</span> Médio</div>
+              <div class="usage-option low" data-val="low"><span class="usage-option-icon">🔴</span> Baixo</div>
+              <div class="usage-option empty selected" data-val="empty"><span class="usage-option-icon">⚫</span> Zerado</div>
+            </div>
           </div>
-          <div class="usage-option medium" data-val="medium">
-            <span class="usage-option-icon">🟡</span> Médio
-          </div>
-          <div class="usage-option low" data-val="low">
-            <span class="usage-option-icon">🔴</span> Baixo
-          </div>
-          <div class="usage-option empty selected" data-val="empty">
-            <span class="usage-option-icon">⚫</span> Zerado
-          </div>
+        `).join('')}
         </div>
       </div>
       ` : ''}
 
       <div class="field-group">
         <label>Preview (O que será salvo)</label>
-        <div style="background:var(--bg-input); padding:0.5rem; border-radius:6px; font-size:0.8rem; font-family:monospace; white-space:pre-wrap; max-height:150px; overflow-y:auto; border:1px solid var(--border)">
+        <div id="modal-preview-json" style="background:var(--bg-input); padding:0.5rem; border-radius:6px; font-size:0.8rem; font-family:monospace; white-space:pre-wrap; max-height:150px; overflow-y:auto; border:1px solid var(--border)">
           ${JSON.stringify(modalCtx.parsedData, null, 2)}
         </div>
       </div>
@@ -116,13 +114,18 @@ function renderStep2() {
 
   // Attach events
   if (isAnti) {
-    const pickerEls = document.querySelectorAll('#modal-level-picker .usage-option');
-    pickerEls.forEach(el => {
-      el.onclick = () => {
-        pickerEls.forEach(p => p.classList.remove('selected'));
-        el.classList.add('selected');
-        modalCtx.level = el.dataset.val;
-      };
+    const pickerGroups = document.querySelectorAll('#modal-level-pickers .usage-picker');
+    pickerGroups.forEach(group => {
+      const modelName = group.dataset.model;
+      const options = group.querySelectorAll('.usage-option');
+      options.forEach(el => {
+        el.onclick = () => {
+          options.forEach(p => p.classList.remove('selected'));
+          el.classList.add('selected');
+          modalCtx.parsedData[modelName].level = el.dataset.val;
+          document.getElementById('modal-preview-json').textContent = JSON.stringify(modalCtx.parsedData, null, 2);
+        };
+      });
     });
   }
 
@@ -146,7 +149,7 @@ async function handleConfirm() {
         gModels[mName] = {
            ...gModels[mName],
            name: mName,
-           level: modalCtx.level,
+           level: modalCtx.parsedData[mName].level,
            resetsAt: modalCtx.parsedData[mName].resetsAt,
            lastUpdated: modalCtx.parsedData[mName].lastUpdated
         };
