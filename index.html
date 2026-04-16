@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TokensMonitor — Monitor de Quotas de IA</title>
+  <meta name="description" content="Monitore os tokens e quotas das suas contas Antigravity e Claude Code em um só lugar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">TokensMonitor</span>
+      </div>
+      <div class="header-actions">
+        <button id="btn-paste" class="btn btn-primary">📋 Colar Atualização</button>
+        <button id="btn-settings" class="btn btn-ghost">⚙️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- VIEWS -->
+  <main id="app-main">
+    <!-- View: Setup (primeiro acesso) -->
+    <section id="view-setup" class="view hidden">
+      <div class="setup-card">
+        <h1>Configurar TokensMonitor</h1>
+        <p>Cole seu GitHub Personal Access Token para começar.</p>
+        <div class="field-group">
+          <label for="input-token">GitHub Personal Access Token</label>
+          <input type="password" id="input-token" placeholder="ghp_..." />
+          <small>Precisa da permissão <code>gist</code>. <a href="https://github.com/settings/tokens/new?scopes=gist&description=TokensMonitor" target="_blank">Criar token aqui ↗</a></small>
+        </div>
+        <button id="btn-setup-save" class="btn btn-primary btn-full">Salvar e Conectar</button>
+        <p id="setup-error" class="error-msg hidden"></p>
+      </div>
+    </section>
+
+    <!-- View: Dashboard -->
+    <section id="view-dashboard" class="view hidden">
+      <div id="dashboard-grid" class="dashboard-grid">
+        <!-- Cards gerados por dashboard.js -->
+      </div>
+      <p id="dashboard-empty" class="empty-state hidden">
+        Nenhuma conta ainda. Clique em "📋 Colar Atualização" para começar.
+      </p>
+    </section>
+
+    <!-- View: Settings -->
+    <section id="view-settings" class="view hidden">
+      <div class="settings-card">
+        <h2>Configurações</h2>
+        <div class="field-group">
+          <label for="settings-token">GitHub Personal Access Token</label>
+          <input type="password" id="settings-token" />
+        </div>
+        <div class="field-group">
+          <label for="settings-gist-id">Gist ID (auto-gerenciado)</label>
+          <input type="text" id="settings-gist-id" readonly />
+        </div>
+        <div class="field-group">
+          <label>Aviso antecipado de notificações</label>
+          <div class="btn-group" id="notif-advance-group">
+            <button class="btn btn-sm" data-value="0">Desligado</button>
+            <button class="btn btn-sm" data-value="15">15 min antes</button>
+            <button class="btn btn-sm" data-value="30">30 min antes</button>
+          </div>
+        </div>
+        <div class="settings-actions">
+          <button id="btn-settings-test" class="btn btn-ghost">Testar Conexão</button>
+          <button id="btn-settings-save" class="btn btn-primary">Salvar</button>
+        </div>
+        <button id="btn-settings-back" class="btn btn-ghost btn-full" style="margin-top:1rem">← Voltar ao Dashboard</button>
+        <p id="settings-msg" class="msg hidden"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: Colar Atualização -->
+  <div id="modal-paste" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Colar Atualização</h3>
+        <button id="modal-paste-close" class="btn-icon">✕</button>
+      </div>
+      <div id="modal-paste-body">
+        <!-- Conteúdo dinâmico gerado por paste-modal.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="modal-overlay hidden">
+    <div class="loading-spinner">⚡</div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
