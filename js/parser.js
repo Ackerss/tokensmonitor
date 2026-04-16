@@ -1,11 +1,11 @@
 // js/parser.js
 
 export function detectPlatform(text) {
-  if (text.includes('Sessão atual') || text.includes('Limites semanais') || text.includes('Claude')) {
+  if (text.includes('Sessão atual') || text.includes('Limites semanais')) {
     return 'claudecode';
   }
   // Antigravity models
-  if (text.includes('Gemini 3.1 Pro') || text.includes('Claude Sonnet 4.6') || text.includes('Gemini 3 Flash')) {
+  if (text.includes('Model Quota') || text.includes('Refreshes in') || text.includes('Gemini') || text.includes('Claude Sonnet') || text.includes('Claude Opus')) {
     return 'antigravity';
   }
   return 'unknown';
@@ -90,11 +90,10 @@ export function parseAntigravity(text) {
     const line = lines[i];
     let modelName = '';
     
-    // Tenta identificar o modelo
-    if (line.includes('Gemini 3.1 Pro')) modelName = 'Gemini 3.1 Pro (High)';
-    else if (line.includes('Gemini 3 Flash')) modelName = 'Gemini 3 Flash';
-    else if (line.includes('Claude Sonnet 4.6')) modelName = 'Claude Sonnet 4.6';
-    else if (line.includes('Claude Opus 4.6')) modelName = 'Claude Opus 4.6';
+    // Identificar o modelo pelo prefixo (funciona para variações tipo Low/High)
+    if (line.startsWith('Gemini') || line.startsWith('Claude') || line.startsWith('GPT-') || line.startsWith('o1') || line.startsWith('o3') || line.startsWith('DeepSeek')) {
+      modelName = line;
+    }
 
     if (modelName) {
       const modelData = { name: modelName, level: 'empty', resetsAt: null, lastUpdated: new Date().toISOString() };
@@ -103,7 +102,7 @@ export function parseAntigravity(text) {
       for (let j = 1; j <= 4 && i + j < lines.length; j++) {
         const nextLine = lines[i + j];
         
-        if (nextLine.toLowerCase().startsWith('in ')) {
+        if (nextLine.toLowerCase().includes('in ') || nextLine.toLowerCase().includes('refreshes')) {
           modelData.resetsAt = parseNextResetDelay(nextLine);
         } else if (nextLine.toLowerCase().startsWith('updated ')) {
           const ago = nextLine.replace(/updated\s+/i, '');

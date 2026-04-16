@@ -53,7 +53,8 @@ function checkAndFire(accName, modelName, resetsAt, advanceMins, modelRef) {
 
       new Notification(`TokensMonitor: ${accName}`, {
         body: `[${modelName}] ${msg}`,
-        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7imaE8L3RleHQ+PC9zdmc+'
+        icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48dGV4dCB5PSIuOWVtIiBmb250LXNpemU9IjkwIj7imaE8L3RleHQ+PC9zdmc+',
+        requireInteraction: true
       });
 
       modelRef._lastNotified = new Date();

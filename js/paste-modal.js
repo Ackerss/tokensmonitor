@@ -107,7 +107,10 @@ function renderStep2() {
         </div>
       </div>
 
-      <button id="modal-btn-confirm" class="btn btn-primary btn-full">Salvar Atualização</button>
+      <div style="display:flex; gap:0.5rem; margin-top:0.5rem">
+        <button id="modal-btn-cancel" class="btn btn-ghost btn-full">Cancelar</button>
+        <button id="modal-btn-confirm" class="btn btn-primary btn-full">Salvar Atualização</button>
+      </div>
     </div>
   `;
 
@@ -123,6 +126,7 @@ function renderStep2() {
     });
   }
 
+  document.getElementById('modal-btn-cancel').onclick = closeModal;
   document.getElementById('modal-btn-confirm').onclick = handleConfirm;
 }
 
