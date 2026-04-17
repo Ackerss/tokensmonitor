@@ -58,11 +58,23 @@
         <div class="field-group">
           <label for="settings-token">GitHub Personal Access Token</label>
           <input type="password" id="settings-token" />
+          <small><a href="https://github.com/settings/tokens/new?scopes=gist&description=TokensMonitor" target="_blank" style="color:var(--primary); text-decoration:none;">Gerar Novo Token no GitHub ↗</a></small>
         </div>
         <div class="field-group">
-          <label for="settings-gist-id">Gist ID (auto-gerenciado)</label>
-          <input type="text" id="settings-gist-id" readonly />
+          <label for="settings-gist-id">Gist ID (Opcional - preencha para sincronizar)</label>
+          <input type="text" id="settings-gist-id" placeholder="Ex: 84a2c8... (deixe em branco para auto-gerar)" />
+          <small><a href="https://gist.github.com" target="_blank" style="color:var(--primary); text-decoration:none;">Acessar seus Gists ↗</a> — O ID é a última parte do link na barra de endereços (ex: <i>/Ackerss/<b>123adc...</b></i>)</small>
         </div>
+        
+        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border-color);" />
+        
+        <div class="field-group">
+          <label>Mudar de Computador Fácil 🚀</label>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0;">Gere um Link Mágico para acessar direto no próximo PC/Navegador sem preencher dados.</p>
+          <button id="btn-magic-link" class="btn btn-ghost" style="width: 100%; border: 1px dashed var(--border-color); color: var(--text-color);">✨ Copiar Link Mágico de Acesso</button>
+        </div>
+
+        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid transparent;" />
         <div class="field-group">
           <label>Aviso antecipado de notificações</label>
           <div class="btn-group" id="notif-advance-group">

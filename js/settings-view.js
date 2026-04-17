@@ -48,12 +48,40 @@ export function initSettingsView() {
     
     saveSettings({
       token: tokenInput.value.trim(),
+      gistId: gistIdInput.value.trim(),
       notifAdvance: notifAdv
     });
     
     msgEl.classList.remove('hidden', 'success', 'error');
     msgEl.textContent = 'Salvo! (Talvez precise recarregar para aplicar tudo)';
     msgEl.classList.add('success');
+  };
+
+  // Action Magic Link
+  document.getElementById('btn-magic-link').onclick = () => {
+    const tk = tokenInput.value.trim() || current.token;
+    const gId = gistIdInput.value.trim() || current.gistId;
+    
+    if (!tk) {
+      msgEl.classList.remove('hidden', 'success');
+      msgEl.classList.add('error');
+      msgEl.textContent = 'Erro: Você precisa ter um Token salvo primeiro!';
+      return;
+    }
+    
+    const url = new URL(window.location.origin + window.location.pathname);
+    url.searchParams.set('t', tk);
+    if (gId) url.searchParams.set('g', gId);
+    
+    navigator.clipboard.writeText(url.toString()).then(() => {
+      msgEl.classList.remove('hidden', 'error');
+      msgEl.classList.add('success');
+      msgEl.textContent = 'Link Mágico copiado! Cole-o no navegador do outro PC.';
+    }).catch(err => {
+      msgEl.classList.remove('hidden', 'success');
+      msgEl.classList.add('error');
+      msgEl.textContent = 'Erro ao copiar o link. Tente manualmente.';
+    });
   };
 
   document.getElementById('btn-settings-back').onclick = () => {
