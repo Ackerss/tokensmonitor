@@ -108,7 +108,6 @@ export function parseAntigravity(text) {
     // Identificar apenas os modelos permitidos
     const isAllowed = 
       line.startsWith('Gemini 3.1 Pro (High)') || 
-      line.startsWith('Gemini 3 Flash') || 
       line.startsWith('Claude Sonnet 4.6') || 
       line.startsWith('Claude Opus 4.6');
 

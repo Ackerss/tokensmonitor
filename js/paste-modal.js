@@ -174,7 +174,7 @@ async function handleConfirm() {
     if (modalCtx.platform === 'antigravity') {
       const gModels = newData.accounts[accId].models || {};
       const newGModels = {};
-      const allowed = ['Gemini 3.1 Pro (High)', 'Gemini 3 Flash', 'Claude Sonnet 4.6 (Thinking)', 'Claude Opus 4.6 (Thinking)'];
+      const allowed = ['Gemini 3.1 Pro (High)', 'Claude Sonnet 4.6 (Thinking)', 'Claude Opus 4.6 (Thinking)'];
       
       // Keep only allowed previous models
       Object.keys(gModels).forEach(k => {

@@ -27,7 +27,7 @@ export function renderDashboard(appData) {
     if (acc.provider === 'antigravity') {
       const models = Object.values(acc.models || {});
       // Se tem algum modelo FULL + ready = topo
-      const hasFullAndReady = models.some(m => m.level === 'full' && isPast(m.resetsAt));
+      const hasFullAndReady = models.some(m => (m.level === 'full' || (m.resetsAt && isPast(m.resetsAt))) && isPast(m.resetsAt));
       if (hasFullAndReady) score = 100;
       else if (models.some(m => m.level === 'medium' && isPast(m.resetsAt))) score = 50;
     } else if (acc.provider === 'claudecode') {
@@ -55,7 +55,6 @@ function buildAntigravityCard(id, acc) {
   
   const allowedOrder = [
     'Gemini 3.1 Pro (High)',
-    'Gemini 3 Flash',
     'Claude Sonnet 4.6 (Thinking)',
     'Claude Opus 4.6 (Thinking)'
   ];
@@ -76,9 +75,14 @@ function buildAntigravityCard(id, acc) {
     return oldLevel; // "0" to "5"
   }
 
-  if (validModels.some(m => parseInt(safeLevel(m.level)) === 5 && isPast(m.resetsAt))) globalDot = 'full';
-  else if (validModels.some(m => parseInt(safeLevel(m.level)) >= 3 && isPast(m.resetsAt))) globalDot = 'medium';
-  else if (validModels.some(m => parseInt(safeLevel(m.level)) >= 1 && isPast(m.resetsAt))) globalDot = 'low';
+  function getEffectiveLevel(m) {
+    if (m.resetsAt && isPast(m.resetsAt)) return '5';
+    return safeLevel(m.level);
+  }
+
+  if (validModels.some(m => parseInt(getEffectiveLevel(m)) === 5 && isPast(m.resetsAt))) globalDot = 'full';
+  else if (validModels.some(m => parseInt(getEffectiveLevel(m)) >= 3 && isPast(m.resetsAt))) globalDot = 'medium';
+  else if (validModels.some(m => parseInt(getEffectiveLevel(m)) >= 1 && isPast(m.resetsAt))) globalDot = 'low';
 
   div.innerHTML = `
     <div class="card-header">
@@ -96,10 +100,10 @@ function buildAntigravityCard(id, acc) {
             <div class="model-refresh ${getTimeStatus(m.resetsAt)}">${getRefreshDisplay(m.resetsAt)}</div>
           </div>
           <div class="token-bar-container">
-            <div class="ag-segments lvl${safeLevel(m.level)}">
-              ${[1, 2, 3, 4, 5].map(i => `<div class="ag-seg ${i <= parseInt(safeLevel(m.level)) ? 'filled' : ''}"></div>`).join('')}
+            <div class="ag-segments lvl${getEffectiveLevel(m)}">
+              ${[1, 2, 3, 4, 5].map(i => `<div class="ag-seg ${i <= parseInt(getEffectiveLevel(m)) ? 'filled' : ''}"></div>`).join('')}
             </div>
-            <div class="token-bar-label lvl${safeLevel(m.level)}">${formatLevel(m.level)}</div>
+            <div class="token-bar-label lvl${getEffectiveLevel(m)}">${formatLevel(getEffectiveLevel(m))}</div>
             <button class="notif-btn ${m.notifEnabled ? 'active' : ''}" data-acc="${id}" data-model="${m.name}" title="Avisar quando renovar">🔔</button>
           </div>
         </div>
