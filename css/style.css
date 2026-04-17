@@ -311,11 +311,21 @@ code { font-family: monospace; background: var(--bg-input); padding: 2px 6px; bo
 .claude-usage-fill {
   height: 100%;
   border-radius: 99px;
-  background: var(--accent);
+  background: #f97316; /* Laranja suave p/ Claude */
   transition: width 0.6s ease, background 0.3s ease;
 }
 .claude-usage-fill.critical { background: var(--danger); }
-.claude-usage-fill.warning  { background: var(--warning); }
+.claude-usage-fill.warning  { background: var(--color-medium); }
+
+.claude-card {
+  background: rgba(249, 115, 22, 0.04);
+  border-color: rgba(249, 115, 22, 0.15);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.06);
+}
+.claude-card:hover {
+  border-color: rgba(249, 115, 22, 0.35);
+  box-shadow: 0 4px 24px rgba(249, 115, 22, 0.12);
+}
 .claude-usage-meta {
   display: flex;
   justify-content: space-between;

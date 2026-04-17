@@ -135,7 +135,7 @@ function buildAntigravityCard(id, acc) {
 
 function buildClaudeCodeCard(id, acc) {
   const div = document.createElement('div');
-  div.className = 'account-card';
+  div.className = 'account-card claude-card';
   
   const sessionRem = Math.max(0, 100 - acc.session);
   const weeklyRem = Math.max(0, 100 - acc.weekly);
