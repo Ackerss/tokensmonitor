@@ -149,9 +149,10 @@ export function parseClaudeCode(text) {
   // Na UI, aparece sessão atual primeiro, e depois limite semanal.
   
   const lines = text.split('\n').map(l => l.trim()).filter(l => l);
-  const result = { session: 0, sessionRefresh: null, weekly: 0, weeklyRefresh: null };
+  const result = { session: 0, sessionRefresh: null, weekly: 0, weeklyRefresh: null, design: 0 };
 
   let inWeekly = false;
+  let inDesign = false;
 
   for (let i = 0; i < lines.length; i++) {
     const l = lines[i].toLowerCase();
@@ -159,28 +160,31 @@ export function parseClaudeCode(text) {
     if (l.includes('semanais') || l.includes('semanal')) {
       inWeekly = true;
     }
+    if (l.includes('claude design')) {
+      inDesign = true;
+    }
 
     // Achar porcentagem
     const m = l.match(/(\d+)%\s*usado/);
     if (m) {
       const val = parseInt(m[1], 10); // Salva a porcentagem "usado" exatamente como vem
-      if (inWeekly) {
-        result.weekly = val;
+      if (inDesign) {
+         result.design = val;
+      } else if (inWeekly) {
+         result.weekly = val;
       } else {
-        result.session = val;
+         result.session = val;
       }
     }
 
     // Achar "Reinicia ..."
     if (l.includes('reinicia')) {
-      // Ex: "Reinicia sex., 22:00" -> Nós só trataremos como data aproximada ou podemos converter pra próxima sexta.
-      // A UI vai só guardar a string original "Reinicia sex., 22:00" no bd JSON ou converte?
-      // O requisito diz que pode ser uma string direto pra exibir se for semanal. É difícil cravar dia/ano do PT-BR exato sem library enorme.
-      // Então guardamos a string original pra esse:
       let rawDt = lines[i].replace(/reinicia\s+/i, '').trim();
       
-      // Provisoriamente: joga na weeklyRefresh (se estiver inWeekly)
-      if (inWeekly) {
+      if (inDesign) {
+         // design currently doesn't specify a refresh in the text block provided, but if it did:
+         // result.designRefresh = rawDt;
+      } else if (inWeekly) {
          result.weeklyRefresh = rawDt;
       } else {
          result.sessionRefresh = rawDt;
@@ -189,7 +193,7 @@ export function parseClaudeCode(text) {
   }
   
   // Se não acho session/weekly claro
-  if (!inWeekly && Object.keys(result).length === 4 && result.session === 0 && result.weekly === 0) {
+  if (!inWeekly && !inDesign && Object.keys(result).length >= 4 && result.session === 0 && result.weekly === 0) {
      // tenta ver se tem regex solta
      const pMatches = text.match(/(\d+)%\s*usado/gi);
      if (pMatches && pMatches.length > 0) {

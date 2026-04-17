@@ -205,6 +205,7 @@ async function handleConfirm() {
         sessionRefresh: merge.sessionRefresh !== null ? merge.sessionRefresh : newData.accounts[accId].sessionRefresh,
         weekly: merge.weekly !== undefined ? merge.weekly : newData.accounts[accId].weekly,
         weeklyRefresh: merge.weeklyRefresh !== null ? merge.weeklyRefresh : newData.accounts[accId].weeklyRefresh,
+        design: merge.design !== undefined ? merge.design : (newData.accounts[accId].design || 0),
       };
     }
 

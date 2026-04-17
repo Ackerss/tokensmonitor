@@ -228,7 +228,7 @@ code { font-family: monospace; background: var(--bg-input); padding: 2px 6px; bo
 }
 .model-refresh {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 .model-refresh.soon { color: var(--color-medium); }

@@ -137,7 +137,11 @@ function buildClaudeCodeCard(id, acc) {
   const div = document.createElement('div');
   div.className = 'account-card';
   
-  let globalDot = acc.weekly < 80 ? (acc.session < 70 ? 'full' : 'low') : 'empty';
+  const sessionRem = Math.max(0, 100 - acc.session);
+  const weeklyRem = Math.max(0, 100 - acc.weekly);
+  const designRem = Math.max(0, 100 - (acc.design || 0));
+
+  let globalDot = weeklyRem > 20 ? (sessionRem > 30 ? 'full' : 'low') : 'empty';
 
   div.innerHTML = `
     <div class="card-header">
@@ -150,18 +154,26 @@ function buildClaudeCodeCard(id, acc) {
     <div class="card-body">
       <div class="claude-section">
         <div class="claude-section-label">Sessão Atual</div>
-        <div class="claude-usage-bar"><div class="claude-usage-fill ${acc.session > 80 ? 'warning' : ''}" style="width: ${acc.session}%"></div></div>
+        <div class="claude-usage-bar"><div class="claude-usage-fill ${sessionRem < 20 ? 'warning' : ''}" style="width: ${sessionRem}%"></div></div>
         <div class="claude-usage-meta">
-          <span>${acc.session}% usado</span>
+          <span>${sessionRem}% livre</span>
           <span>${acc.sessionRefresh ? getRefreshDisplay(acc.sessionRefresh) : 'Por sessão'}</span>
         </div>
       </div>
       <div class="claude-section weekly">
         <div class="claude-section-label">Limite Semanal</div>
-        <div class="claude-usage-bar"><div class="claude-usage-fill ${acc.weekly > 90 ? 'critical' : (acc.weekly > 70 ? 'warning' : '')}" style="width: ${acc.weekly}%"></div></div>
+        <div class="claude-usage-bar"><div class="claude-usage-fill ${weeklyRem < 10 ? 'critical' : (weeklyRem < 30 ? 'warning' : '')}" style="width: ${weeklyRem}%"></div></div>
         <div class="claude-usage-meta">
-          <span>${acc.weekly}% usado</span>
+          <span>${weeklyRem}% livre</span>
           <span>${getRefreshDisplay(acc.weeklyRefresh)}</span>
+        </div>
+      </div>
+      <div class="claude-section design">
+        <div class="claude-section-label">Claude Design</div>
+        <div class="claude-usage-bar"><div class="claude-usage-fill ${designRem < 10 ? 'critical' : (designRem < 30 ? 'warning' : '')}" style="width: ${designRem}%"></div></div>
+        <div class="claude-usage-meta">
+          <span>${designRem}% livre</span>
+          <span>Semanal</span>
         </div>
       </div>
     </div>
